@@ -1,0 +1,134 @@
+/* Основные стили для страницы "Собрать ланч" */
+
+/* Стили для сетки блюд */
+.dishes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 20px 0;
+}
+
+/* Стили для карточки блюда */
+.dish-card {
+    display: flex;
+    flex-direction: column;
+    padding: 30px 40px;
+    border-radius: 35px;
+    background-color: white;
+    cursor: pointer;
+    filter: drop-shadow(17px 19px 24px rgba(0, 0, 0, 0.13));
+    transition: all 0.3s ease;
+}
+
+/* Эффект при наведении на карточку */
+.dish-card:hover {
+    border: 2px solid tomato;
+}
+
+/* Изменение цвета кнопки при наведении на карточку */
+.dish-card:hover .add-btn {
+    background-color: tomato;
+    color: white;
+}
+
+/* Стили для изображения в карточке */
+.dish-card img {
+    width: 100%;
+    border-radius: 35px;
+    margin: 0 0 15px 0;
+}
+
+/* Стили для цены */
+.dish-price {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+
+/* Стили для названия блюда */
+.dish-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 8px;
+    min-height: 2.4rem; /* Для выравнивания кнопок при разной высоте названия */
+}
+
+/* Стили для веса/объема */
+.dish-weight {
+    color: #7f8c8d;
+    margin-bottom: 15px;
+    flex-grow: 1; /* Занимает доступное пространство для выравнивания кнопок */
+}
+
+/* Стили для кнопки "Добавить" */
+.add-btn {
+    background-color: #f1eee9;
+    color: #2c3e50;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-top: auto; /* Кнопка всегда внизу карточки */
+}
+
+/* Эффект при наведении на кнопку */
+.add-btn:hover {
+    background-color: #e0dcd5;
+    transform: translateY(-2px);
+}
+
+/* Стили для активной ссылки в меню */
+#active {
+    color: tomato !important;
+    background-color: rgba(255, 99, 71, 0.1);
+}
+
+/* Стили для навигационного меню */
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+}
+
+/* Адаптивность для ширины ≤800px */
+@media (max-width: 800px) {
+    .dishes-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    nav {
+        justify-content: space-between;
+    }
+    
+    h1 {
+        text-align: center;
+    }
+}
+
+/* Адаптивность для ширины ≤600px */
+@media (max-width: 600px) {
+    .dishes-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    nav {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    nav a {
+        font-size: 1.2rem; /* Увеличиваем шрифт на 4px (16px → 20px) */
+    }
+    
+    section h2 {
+        text-align: center;
+    }
+}
