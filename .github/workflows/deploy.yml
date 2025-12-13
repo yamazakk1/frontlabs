@@ -1,0 +1,185 @@
+name: Deploy Each Branch to Separate Folder
+
+on:
+  push:
+    branches: [main, lab1, lab2]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    
+    - name: Get branch name
+      id: branch
+      run: |
+        BRANCH_NAME="${GITHUB_REF#refs/heads/}"
+        echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
+        if [ "$BRANCH_NAME" = "main" ]; then
+          echo "folder_path=" >> $GITHUB_OUTPUT
+        else
+          echo "folder_path=$BRANCH_NAME/" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Prepare files
+      run: |
+        mkdir -p _site
+        
+        if [ "${{ steps.branch.outputs.branch }}" = "main" ]; then
+          echo "Deploying MAIN branch to root"
+          cp -r ./* _site/ 2>/dev/null || true
+          
+          cat > _site/index.html << 'NAV'
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лабораторные работы</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2.5rem;
+        }
+        .lab-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 5px solid #3498db;
+            transition: all 0.3s ease;
+        }
+        .lab-card:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .lab-card h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+        .lab-card p {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        .links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        .btn.secondary {
+            background: #95a5a6;
+        }
+        .btn.secondary:hover {
+            background: #7f8c8d;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Лабораторные работы</h1>
+        
+        <div class="lab-card">
+            <h2>Лабораторная работа 1</h2>
+            <p>Базовая версия сайта ресторана. Главная страница с таблицей популярных блюд, навигацией и контактами.</p>
+            <div class="links">
+                <a href="/${{ github.event.repository.name }}/lab1/index.html" class="btn">Открыть сайт</a>
+                <a href="https://github.com/${{ github.repository }}/tree/lab1" class="btn secondary">Посмотреть код</a>
+            </div>
+        </div>
+        
+        <div class="lab-card">
+            <h2>Лабораторная работа 2</h2>
+            <p>Страница "Собрать ланч" с использованием Grid и Flexbox. Адаптивный дизайн, hover-эффекты, меню блюд.</p>
+            <div class="links">
+                <a href="/${{ github.event.repository.name }}/lab2/menu.html" class="btn">Открыть меню</a>
+                <a href="/${{ github.event.repository.name }}/lab2/index.html" class="btn">Главная страница</a>
+                <a href="https://github.com/${{ github.repository }}/tree/lab2" class="btn secondary">Посмотреть код</a>
+            </div>
+        </div>
+        
+        <div class="lab-card">
+            <h2>Текущая версия (main)</h2>
+            <p>Последняя версия со всеми обновлениями. Содержит обе лабораторные работы.</p>
+            <div class="links">
+                <a href="/${{ github.event.repository.name }}/" class="btn">Открыть главную</a>
+                <a href="https://github.com/${{ github.repository }}" class="btn secondary">Посмотреть код</a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            Автоматический деплой через GitHub Actions
+        </div>
+    </div>
+</body>
+</html>
+NAV
+          
+        else
+          echo "Deploying ${{ steps.branch.outputs.branch }} branch to /${{ steps.branch.outputs.branch }}/"
+          mkdir -p "_site/${{ steps.branch.outputs.branch }}"
+          cp -r ./* "_site/${{ steps.branch.outputs.branch }}/" 2>/dev/null || true
+        fi
+        
+        rm -rf _site/.github _site/.git* _site/README.md 2>/dev/null || true
+        echo "Files prepared for ${{ steps.branch.outputs.branch }}"
+    
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
+      
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v2
+      with:
+        path: '_site'
+        
+    - name: Deploy to GitHub Pages
+      uses: actions/deploy-pages@v2
