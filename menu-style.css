@@ -399,6 +399,46 @@ nav {
     box-shadow: 0 4px 8px rgba(46, 204, 113, 0.3);
 }
 
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 15px;
+    border: 1px solid #e9ecef;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    background-color: white;
+    border: 2px solid #3498db;
+    border-radius: 8px;
+    color: #3498db;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    background-color: #3498db;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.filter-btn.active {
+    background-color: #3498db;
+    color: white;
+    border-color: #2980b9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* медиа-запросы остаются без изменений... */
+
 @media (max-width: 800px) {
     .dishes-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -421,6 +461,16 @@ nav {
     .item-controls {
         width: 100%;
         justify-content: space-between;
+    }
+    
+    /* адаптация фильтров для мобильных */
+    .filters {
+        justify-content: center;
+    }
+    
+    .filter-btn {
+        padding: 6px 12px;
+        font-size: 0.85rem;
     }
 }
 
@@ -465,8 +515,18 @@ nav {
     .reset-btn, .submit-btn {
         width: 100%;
     }
+    
+    /* адаптация фильтров для маленьких экранов */
+    .filters {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .filter-btn {
+        width: 100%;
+        max-width: 250px;
+    }
 }
-
 
 @media (max-width: 400px) {
     .dish-card {
